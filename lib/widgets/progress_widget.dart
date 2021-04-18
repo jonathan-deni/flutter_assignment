@@ -1,23 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_assignment/models/account.dart';
 
-class ProgressWidget extends StatefulWidget {
-  const ProgressWidget({
-    Key key,
-  }) : super(key: key);
-
-  @override
-  _ProgressWidgetState createState() => _ProgressWidgetState();
-}
-
-class _ProgressWidgetState extends State<ProgressWidget> {
-  final account = Account();
+class ProgressWidget extends StatelessWidget {
+  ProgressWidget(this.progress);
+  final int progress;
 
   @override
   Widget build(BuildContext context) {
-    // int progress = account.progress;
-    // print(account.progress);
-
     return Row(
       children: <Widget>[
         Expanded(
@@ -29,7 +17,7 @@ class _ProgressWidgetState extends State<ProgressWidget> {
                   color: Colors.black
               ),
             ),
-            // backgroundColor: progress != null && progress >= 1 ? Colors.red : Colors.white,
+            backgroundColor: progress != null && progress >= 1 ? Colors.red : Colors.white,
           ),
         ),
         Expanded(
@@ -41,7 +29,7 @@ class _ProgressWidgetState extends State<ProgressWidget> {
                   color: Colors.black
               ),
             ),
-            // backgroundColor: progress != null && progress >= 2 ? Colors.red : Colors.white,
+            backgroundColor: progress != null && progress >= 2 ? Colors.red : Colors.white,
           ),
         ),
         Expanded(
@@ -53,7 +41,7 @@ class _ProgressWidgetState extends State<ProgressWidget> {
                   color: Colors.black
               ),
             ),
-            // backgroundColor: progress != null && progress >= 3 ? Colors.red : Colors.white,
+            backgroundColor: progress != null && progress >= 3 ? Colors.red : Colors.white,
           ),
         ),
         Expanded(
@@ -65,7 +53,7 @@ class _ProgressWidgetState extends State<ProgressWidget> {
                   color: Colors.black
               ),
             ),
-            // backgroundColor: progress != null && progress >= 4 ? Colors.red : Colors.white,
+            backgroundColor: progress != null && progress >= 4 ? Colors.red : Colors.white,
           ),
         ),
       ],

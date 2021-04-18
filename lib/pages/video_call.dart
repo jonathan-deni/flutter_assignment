@@ -145,7 +145,7 @@ class _VideoCallState extends State<VideoCall> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                ProgressWidget(),
+                ProgressWidget(3),
                 Row(
                   children: <Widget>[
                     Container(
@@ -287,7 +287,33 @@ class _VideoCallState extends State<VideoCall> {
                 Column(
                   children: <Widget>[
                     NextButton(onPressNextButton: () {
-
+                      if(currentDate != null && currentTime != null) {
+                        //valid data
+                      } else {
+                        showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Video Call Schedule Incomplete'),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text('Please select video call schedule'),
+                                  ],
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      }
                       // Navigator.pushNamed(context, '/vcall');
                     }),
                   ],

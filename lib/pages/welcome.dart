@@ -23,14 +23,11 @@ class _WelcomeState extends State<Welcome> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                ProgressWidget(),
+                ProgressWidget(0),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    SizedBox(
-                      height: 60.0,
-                    ),
                     Container(
                       width: 230,
                       child: RichText(
@@ -122,8 +119,8 @@ class _WelcomeState extends State<Welcome> {
                         final form = formKey.currentState;
                         if (form.validate()) {
                           form.save();
-                          // setState(() => account.progress += 1);
-                          // Navigator.pushNamed(context, '/password');
+                          setState(() => account.progress += 1);
+                          Navigator.pushNamed(context, '/password');
                         }
                       }
                     ),

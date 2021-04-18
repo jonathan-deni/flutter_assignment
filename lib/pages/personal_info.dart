@@ -45,7 +45,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                ProgressWidget(),
+                ProgressWidget(2),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
@@ -186,10 +186,37 @@ class _PersonalInfoState extends State<PersonalInfo> {
                   children: <Widget>[
                     NextButton(onPressNextButton: () {
                       final form = formKey.currentState;
-                      bool validPersonalInfo = currentGoals.isNotEmpty && currentIncome.isNotEmpty && currentExpense.isNotEmpty;
+                      bool validPersonalInfo = (currentGoals != null)  &&
+                          (currentIncome != null) &&
+                          (currentExpense != null);
                       if (validPersonalInfo) {
                         form.save();
                         Navigator.pushNamed(context, '/vcall');
+                      } else {
+                        print('personal info error');
+                        showDialog<void>(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Personal Information Incomplete'),
+                              content: SingleChildScrollView(
+                                child: ListBody(
+                                  children: <Widget>[
+                                    Text('Please chose all personal information data needed'),
+                                  ],
+                                ),
+                              ),
+                              actions: <Widget>[
+                                TextButton(
+                                  child: Text('OK'),
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                ),
+                              ],
+                            );
+                          },
+                        );
                       }
                     }),
                   ],
