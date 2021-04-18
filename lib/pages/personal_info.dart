@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_assignment/models/account.dart';
 import 'package:flutter_assignment/widgets/next_button.dart';
+import 'package:flutter_assignment/widgets/progress_widget.dart';
 
 class PersonalInfo extends StatefulWidget {
   @override
@@ -44,9 +45,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Row(
-                  children: <Widget>[Text('STEP 1 OF 5')],
-                ),
+                ProgressWidget(),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
@@ -186,11 +185,12 @@ class _PersonalInfoState extends State<PersonalInfo> {
                 Column(
                   children: <Widget>[
                     NextButton(onPressNextButton: () {
-                      // final form = formKey.currentState;
-                      // if (form.validate()) {
-                      //   form.save();
+                      final form = formKey.currentState;
+                      bool validPersonalInfo = currentGoals.isNotEmpty && currentIncome.isNotEmpty && currentExpense.isNotEmpty;
+                      if (validPersonalInfo) {
+                        form.save();
                         Navigator.pushNamed(context, '/vcall');
-                      // }
+                      }
                     }),
                   ],
                 )

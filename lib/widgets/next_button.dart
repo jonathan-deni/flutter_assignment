@@ -10,7 +10,7 @@ class NextButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ButtonTheme(
         minWidth: 500,
-        height: 60,
+        height: 50,
         child: RaisedButton(
           onPressed: onPressNextButton,
           child: Text(

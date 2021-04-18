@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_assignment/models/account.dart';
 import 'package:flutter_assignment/widgets/next_button.dart';
+import 'package:flutter_assignment/widgets/progress_widget.dart';
 
 class VideoCall extends StatefulWidget {
   @override
@@ -13,12 +15,121 @@ class _VideoCallState extends State<VideoCall> {
   final account = Account();
 
   DateTime currentDate;
-  TimeOfDay currentTime;
+  DateTime currentTime;
   TextEditingController dateTextController = TextEditingController();
   TextEditingController timeTextController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    /// This builds material date picker in Android
+    buildMaterialDatePicker(BuildContext context) async {
+      final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: currentDate != null ? currentDate : DateTime.now(),
+        firstDate: DateTime.now(),
+        lastDate: DateTime(2022),
+        builder: (context, child) {
+          return Theme(
+            data: ThemeData.light(),
+            child: child,
+          );
+        },
+      );
+      if (picked != null && picked != currentDate)
+        setState(() {
+          currentDate = picked;
+          dateTextController.text = DateFormat('EEEE, dd MMMM y').format(picked);
+        });
+    }
+
+    /// This builds cupertion date picker in iOS
+    buildCupertinoDatePicker(BuildContext context) {
+      showModalBottomSheet(
+          context: context,
+          builder: (BuildContext builder) {
+            return Container(
+              height: MediaQuery.of(context).copyWith().size.height / 3,
+              color: Colors.white,
+              child: CupertinoDatePicker(
+                mode: CupertinoDatePickerMode.date,
+                onDateTimeChanged: (picked) {
+                  if (picked != null && picked != currentDate)
+                    setState(() {
+                      currentDate = picked;
+                      dateTextController.text = DateFormat('EEEE, dd MMMM y').format(picked);
+                    });
+                },
+                initialDateTime: currentDate != null ? currentDate : DateTime.now(),
+                minimumYear: int.parse(DateFormat('y').format(DateTime.now())),
+                maximumYear: 2022,
+              ),
+            );
+          });
+    }
+
+    buildMaterialTimePicker(BuildContext context) {
+      DateTime selectedDate = currentDate != null ? currentDate : new DateTime.now();
+      showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.now()
+      ).then((value) => setState(() => {
+        currentTime = new DateTime(selectedDate.year, selectedDate.month, selectedDate.day, value.hour, value.minute),
+        timeTextController.text = DateFormat('jm').format(currentTime)
+      }));
+    }
+
+    buildCupertinoTimePicker(BuildContext context) {
+      showModalBottomSheet(
+          context: context,
+          builder: (BuildContext builder) {
+            return Container(
+              height: MediaQuery.of(context).copyWith().size.height / 3,
+              color: Colors.white,
+              child: CupertinoDatePicker(
+                  mode: CupertinoDatePickerMode.time,
+                  onDateTimeChanged: (picked) {
+                    if (picked != null && picked != currentDate)
+                      print(picked);
+                      setState(() {
+                        currentTime = picked;
+                        timeTextController.text = DateFormat('jm').format(picked);
+                      });
+                    },
+                  ),
+            );
+          });
+    }
+
+    _selectDate(BuildContext context) async {
+      final ThemeData theme = Theme.of(context);
+      assert(theme.platform != null);
+      switch (theme.platform) {
+        case TargetPlatform.android:
+        case TargetPlatform.fuchsia:
+        case TargetPlatform.linux:
+        case TargetPlatform.windows:
+          return buildMaterialDatePicker(context);
+        case TargetPlatform.iOS:
+        case TargetPlatform.macOS:
+          return buildCupertinoDatePicker(context);
+      }
+    }
+
+    _selectTime(BuildContext context) async {
+      final ThemeData theme = Theme.of(context);
+      assert(theme.platform != null);
+      switch (theme.platform) {
+        case TargetPlatform.android:
+        case TargetPlatform.fuchsia:
+        case TargetPlatform.linux:
+        case TargetPlatform.windows:
+          return buildMaterialTimePicker(context);
+        case TargetPlatform.iOS:
+        case TargetPlatform.macOS:
+          return buildCupertinoTimePicker(context);
+      }
+    }
+
     return Scaffold(
         backgroundColor: Colors.blueAccent[400],
         appBar: AppBar(
@@ -34,9 +145,7 @@ class _VideoCallState extends State<VideoCall> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                Row(
-                  children: <Widget>[Text('STEP 5 OF 5')],
-                ),
+                ProgressWidget(),
                 Row(
                   children: <Widget>[
                     Container(
@@ -117,15 +226,7 @@ class _VideoCallState extends State<VideoCall> {
                                           color: Colors.blueAccent[400],
                                         ),
                                         onPressed: () {
-                                          showDatePicker(
-                                              context: context, 
-                                              initialDate: currentDate != null ? currentDate : DateTime.now(), 
-                                              firstDate: DateTime.now(), 
-                                              lastDate: DateTime(2022)
-                                          ).then((value) => setState(() => {
-                                            currentDate = value,
-                                            dateTextController.text = DateFormat('EEEE, dd MMMM y').format(value)
-                                          }));
+                                          _selectDate(context);
                                         },
                                       )
                                     ),
@@ -171,13 +272,7 @@ class _VideoCallState extends State<VideoCall> {
                                             color: Colors.blueAccent[400],
                                           ),
                                           onPressed: () {
-                                            showTimePicker(
-                                                context: context,
-                                                initialTime: TimeOfDay.now()
-                                            ).then((value) => setState(() => {
-                                              currentTime = value,
-                                              timeTextController.text = value.format(context)
-                                            }));
+                                            _selectTime(context);
                                           },
                                         )
                                     ),
@@ -188,91 +283,6 @@ class _VideoCallState extends State<VideoCall> {
                           ),
                         ],
                       ),
-                      // Builder(
-                      //   builder: (context) => Form(
-                      //     key: formKey,
-                      //     child:
-                      //     Column(
-                      //       mainAxisAlignment: MainAxisAlignment.center,
-                      //       mainAxisSize: MainAxisSize.max,
-                      //       children: <Widget>[
-                      //         Container(
-                      //           decoration: BoxDecoration(
-                      //             color: Colors.white,
-                      //             borderRadius: BorderRadius.circular(10),
-                      //             border: Border.all(
-                      //               color: Colors.white,
-                      //               width: 10,
-                      //             ),
-                      //           ),
-                      //           child: Column(
-                      //             crossAxisAlignment: CrossAxisAlignment.start,
-                      //             children: <Widget>[
-                      //               // Text('Date'),
-                      //               Text('${currentDate.toString()}'),
-                      //               DropdownButtonFormField(
-                      //                 value: currentDate,
-                      //                 decoration: InputDecoration(
-                      //                     enabledBorder: UnderlineInputBorder(
-                      //                         borderSide: BorderSide(color: Colors.white)
-                      //                     )
-                      //                 ),
-                      //
-                      //                 // items: goalsList.map((goals) {
-                      //                 //   return DropdownMenuItem(
-                      //                 //     value: goals,
-                      //                 //     child: Text('$goals'),
-                      //                 //   );
-                      //                 // }).toList(),
-                      //                 hint: Text('-Choose Option-'),
-                      //                 disabledHint: Text('-Choose Option-'),
-                      //                 onChanged: (val) => setState(() => currentDate = val),
-                      //                 onSaved: (val) => setState(() => account.vCallDate = val),
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ),
-                      //         SizedBox(height: 20.0,),
-                      //         Container(
-                      //           decoration: BoxDecoration(
-                      //             color: Colors.white,
-                      //             borderRadius: BorderRadius.circular(10),
-                      //             border: Border.all(
-                      //               color: Colors.white,
-                      //               width: 10,
-                      //             ),
-                      //           ),
-                      //           child: Column(
-                      //             crossAxisAlignment: CrossAxisAlignment.start,
-                      //             children: <Widget>[
-                      //               Text('${currentTime.toString()}'),
-                      //               // Text('Time'),
-                      //               DropdownButtonFormField(
-                      //                 value: currentTime.toString(),
-                      //                 decoration: InputDecoration(
-                      //                     enabledBorder: UnderlineInputBorder(
-                      //                         borderSide: BorderSide(color: Colors.white)
-                      //                     )
-                      //                 ),
-                      //                 // items: incomeList.map((goals) {
-                      //                 //   return DropdownMenuItem(
-                      //                 //     value: goals,
-                      //                 //     child: Text('$goals'),
-                      //                 //   );
-                      //                 // }).toList(),
-                      //                 hint: Text('-Choose Option-'),
-                      //                 disabledHint: Text('-Choose Option-'),
-                      //                 // onChanged: (val) => setState(() => currentTime = val),
-                      //                 onSaved: (val) => setState(() => account.vCallTime = val),
-                      //               ),
-                      //             ],
-                      //           ),
-                      //         ),
-                      //
-                      //       ],
-                      //     ),
-                      //   ),
-                      // ),
                     ]),
                 Column(
                   children: <Widget>[

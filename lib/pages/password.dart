@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_assignment/models/account.dart';
 import 'package:flutter_assignment/widgets/next_button.dart';
+import 'package:flutter_assignment/widgets/progress_widget.dart';
 
 class Password extends StatefulWidget {
   @override
@@ -43,9 +44,7 @@ class _PasswordState extends State<Password> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              Row(
-                children: <Widget>[Text('STEP 1 OF 5')],
-              ),
+              ProgressWidget(),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,

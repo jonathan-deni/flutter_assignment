@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_assignment/models/account.dart';
 import 'package:flutter_assignment/widgets/next_button.dart';
+import 'package:flutter_assignment/widgets/progress_widget.dart';
 
 class Welcome extends StatefulWidget {
   @override
@@ -9,7 +10,7 @@ class Welcome extends StatefulWidget {
 
 class _WelcomeState extends State<Welcome> {
   final formKey = GlobalKey<FormState>();
-  final account = Account();
+  final account = new Account();
 
   @override
   Widget build(BuildContext context) {
@@ -22,11 +23,7 @@ class _WelcomeState extends State<Welcome> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Row(
-                  children: <Widget>[
-                      Text('STEP 1 OF 5')
-                  ],
-                ),
+                ProgressWidget(),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
@@ -107,10 +104,13 @@ class _WelcomeState extends State<Welcome> {
                                     return null;
                                   }
                                 },
-                                onSaved: (val) => setState(() => account.email = val)),
-
-                          )
-                                                  ),
+                                onSaved: (val) => setState(() => {
+                                  account.email = val,
+                                  account.progress = 1
+                                })
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
@@ -122,7 +122,8 @@ class _WelcomeState extends State<Welcome> {
                         final form = formKey.currentState;
                         if (form.validate()) {
                           form.save();
-                          Navigator.pushNamed(context, '/password');
+                          // setState(() => account.progress += 1);
+                          // Navigator.pushNamed(context, '/password');
                         }
                       }
                     ),
