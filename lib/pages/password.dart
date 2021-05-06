@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_assignment/models/account.dart';
 import 'package:flutter_assignment/widgets/next_button.dart';
 import 'package:flutter_assignment/widgets/progress_widget.dart';
+import 'package:provider/provider.dart';
 
 class Password extends StatefulWidget {
   @override
@@ -44,7 +45,7 @@ class _PasswordState extends State<Password> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
-              ProgressWidget(1),
+              Consumer<Account>(builder: (context, account, _) => ProgressWidget(account.progress)),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.max,
@@ -78,58 +79,62 @@ class _PasswordState extends State<Password> {
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 8.0),
-                            child: TextFormField(
-                              onChanged: (text) {
-                                if (text.length > 0) {
-                                  bool hasLowerCase =
-                                      text != null || text.isEmpty != true;
-                                  bool hasUpperCase =
-                                      text.contains(new RegExp(r'[A-Z]'));
-                                  bool hasNumbers =
-                                      text.contains(new RegExp(r'[0-9]'));
-                                  bool hasEnoughChar = text.length >= 9;
-                                  bool hasValidPassword = hasLowerCase && hasUpperCase && hasNumbers && hasEnoughChar;
+                            child: Consumer<Account>(
+                              builder: (context, account, _) => TextFormField(
+                                onChanged: (text) {
+                                  if (text.length > 0) {
+                                    bool hasLowerCase =
+                                        text != null || text.isEmpty != true;
+                                    bool hasUpperCase =
+                                        text.contains(new RegExp(r'[A-Z]'));
+                                    bool hasNumbers =
+                                        text.contains(new RegExp(r'[0-9]'));
+                                    bool hasEnoughChar = text.length >= 9;
+                                    bool hasValidPassword = hasLowerCase && hasUpperCase && hasNumbers && hasEnoughChar;
 
-                                  setState(() {
-                                    isLowerCase = hasLowerCase;
-                                    isUpperCase = hasUpperCase;
-                                    isContainsNumber = hasNumbers;
-                                    isEnoughChar = hasEnoughChar;
-                                    isValidPassword = hasValidPassword;
-                                  });
-                                } else {
-                                  setState(() {
-                                    isLowerCase = false;
-                                    isUpperCase = false;
-                                    isContainsNumber = false;
-                                    isEnoughChar = false;
-                                    isValidPassword = false;
-                                  });
-                                }
-                              },
-                              decoration: InputDecoration(
-                                hintText: 'Create Password',
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    isPasswordVisible
-                                        ? Icons.visibility
-                                        : Icons.visibility_off,
-                                    color: Colors.blueAccent,
-                                  ),
-                                  onPressed: () {
                                     setState(() {
-                                      isPasswordVisible = !isPasswordVisible;
+                                      isLowerCase = hasLowerCase;
+                                      isUpperCase = hasUpperCase;
+                                      isContainsNumber = hasNumbers;
+                                      isEnoughChar = hasEnoughChar;
+                                      isValidPassword = hasValidPassword;
                                     });
-                                    print(isPasswordVisible);
-                                  },
+                                  } else {
+                                    setState(() {
+                                      isLowerCase = false;
+                                      isUpperCase = false;
+                                      isContainsNumber = false;
+                                      isEnoughChar = false;
+                                      isValidPassword = false;
+                                    });
+                                  }
+                                },
+                                decoration: InputDecoration(
+                                  hintText: 'Create Password',
+                                  suffixIcon: IconButton(
+                                    icon: Icon(
+                                      isPasswordVisible
+                                          ? Icons.visibility
+                                          : Icons.visibility_off,
+                                      color: Colors.blueAccent,
+                                    ),
+                                    onPressed: () {
+                                      setState(() {
+                                        isPasswordVisible = !isPasswordVisible;
+                                      });
+                                      print(isPasswordVisible);
+                                    },
+                                  ),
+                                  border: InputBorder.none,
                                 ),
-                                border: InputBorder.none,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                onSaved: (val) {
+                                  account.password = val;
+                                  if (account.progress <= 1 ) account.progress ++;
+                                },
+                                obscureText: !isPasswordVisible,
                               ),
-                              autovalidateMode:
-                                  AutovalidateMode.onUserInteraction,
-                              onSaved: (val) =>
-                                  setState(() => account.password = val),
-                              obscureText: !isPasswordVisible,
                             ),
                           )),
                     ),

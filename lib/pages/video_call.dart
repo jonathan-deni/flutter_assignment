@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_assignment/models/account.dart';
 import 'package:flutter_assignment/widgets/next_button.dart';
 import 'package:flutter_assignment/widgets/progress_widget.dart';
+import 'package:provider/provider.dart';
 
 class VideoCall extends StatefulWidget {
   @override
@@ -145,26 +146,10 @@ class _VideoCallState extends State<VideoCall> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                ProgressWidget(3),
+                Consumer<Account>(builder: (context, account, _) => ProgressWidget(account.progress)),
                 Row(
                   children: <Widget>[
-                    Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(100),
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 10,
-                        ),
-                      ),
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.calendar_today,
-                          color: Colors.blueAccent[400],
-                        ),
-                        onPressed: () {},
-                      ),
-                    ),
+                    CalendarIcon(),
                   ],
                 ),
                 Column(
@@ -286,41 +271,103 @@ class _VideoCallState extends State<VideoCall> {
                     ]),
                 Column(
                   children: <Widget>[
-                    NextButton(onPressNextButton: () {
-                      if(currentDate != null && currentTime != null) {
-                        //valid data
-                      } else {
-                        showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Video Call Schedule Incomplete'),
-                              content: SingleChildScrollView(
-                                child: ListBody(
-                                  children: <Widget>[
-                                    Text('Please select video call schedule'),
-                                  ],
+                    Consumer<Account>(
+                      builder: (context, account, _) => NextButton(onPressNextButton: () {
+                        if(currentDate != null && currentTime != null) {
+                          account.vCallSchedule = new DateTime(currentDate.year, currentDate.month, currentDate.day, currentTime.hour, currentTime.minute);
+                          
+                          if(account.progress <= 3) account.progress += 1;
+                          Navigator.pushNamed(context, '/confirm');
+                        } else {
+                          showDialog<void>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Video Call Schedule Incomplete'),
+                                content: SingleChildScrollView(
+                                  child: ListBody(
+                                    children: <Widget>[
+                                      Text('Please select video call schedule'),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text('OK'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                      // Navigator.pushNamed(context, '/vcall');
-                    }),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      }),
+                    ),
                   ],
                 )
               ],
             ),
           ),
         ));
+  }
+}
+
+class CalendarIcon extends StatefulWidget {
+  const CalendarIcon({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  _CalendarIconState createState() => _CalendarIconState();
+}
+
+class _CalendarIconState extends State<CalendarIcon> with SingleTickerProviderStateMixin {
+  // AnimationController controller;
+  // Animation animation;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    // controller = AnimationController(
+    //     duration: Duration(seconds: 5),
+    //     vsync: this
+    // );
+    //
+    // animation = Tween<double>(begin: 0, end : 20).animate(controller)..addListener(() {
+    //   setState(() {});
+    // })..addStatusListener((status) {
+    //   if (status == AnimationStatus.completed) {
+    //     controller.reverse();
+    //   } else if (status == AnimationStatus.dismissed) {
+    //     controller.forward();
+    //   }
+    // });
+    //
+    // controller.forward();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(100),
+          border: Border.all(
+            color: Colors.white,
+            width: 10,
+          ),
+        ),
+        child: IconButton(
+          icon: Icon(
+            Icons.calendar_today,
+            color: Colors.blueAccent[400],
+          ),
+          onPressed: () {},
+        ),
+      );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_assignment/models/account.dart';
 import 'package:flutter_assignment/widgets/next_button.dart';
 import 'package:flutter_assignment/widgets/progress_widget.dart';
+import 'package:provider/provider.dart';
 
 class Welcome extends StatefulWidget {
   @override
@@ -23,7 +24,7 @@ class _WelcomeState extends State<Welcome> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                ProgressWidget(0),
+                Consumer<Account>(builder: (context, account, _) => ProgressWidget(account.progress)),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
@@ -77,34 +78,37 @@ class _WelcomeState extends State<Welcome> {
                           ),
                           child: Padding(
                             padding: EdgeInsets.symmetric(horizontal: 8.0),
-                            child: TextFormField(
-                                decoration: InputDecoration(
-                                  hintText: 'Email',
-                                  icon: Icon(
-                                    Icons.mail,
-                                    color: Colors.grey,
+                            child: Consumer<Account>(
+                              builder: (context, account, _) =>
+                              TextFormField(
+                                  decoration: InputDecoration(
+                                    hintText: 'Email',
+                                    icon: Icon(
+                                      Icons.mail,
+                                      color: Colors.grey,
+                                    ),
+                                    border: InputBorder.none,
                                   ),
-                                  border: InputBorder.none,
-                                ),
-                                validator: (String value) {
-                                  // Pattern pattern = '/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+/';
-                                  // RegExp regex = new RegExp(pattern)
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please enter some text';
-                                  } else if (!value.contains('@')) {
-                                    return 'Please enter valid email address';
-                                  }
-                                  // else if (!regex.hasMatch(value)) {
-                                  //   return 'Please enter valid email address';
-                                  // }
-                                  else {
-                                    return null;
-                                  }
-                                },
-                                onSaved: (val) => setState(() => {
-                                  account.email = val,
-                                  account.progress = 1
-                                })
+                                  validator: (String value) {
+                                    // Pattern pattern = '/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+/';
+                                    // RegExp regex = new RegExp(pattern)
+                                    if (value == null || value.isEmpty) {
+                                      return 'Please enter some text';
+                                    } else if (!value.contains('@')) {
+                                      return 'Please enter valid email address';
+                                    }
+                                    // else if (!regex.hasMatch(value)) {
+                                    //   return 'Please enter valid email address';
+                                    // }
+                                    else {
+                                      return null;
+                                    }
+                                  },
+                                  onSaved: (val) => setState(() => {
+                                    account.email = val,
+                                    if(account.progress == 0) account.progress += 1
+                                  })
+                              ),
                             ),
                           ),
                         ),
@@ -119,7 +123,6 @@ class _WelcomeState extends State<Welcome> {
                         final form = formKey.currentState;
                         if (form.validate()) {
                           form.save();
-                          setState(() => account.progress += 1);
                           Navigator.pushNamed(context, '/password');
                         }
                       }

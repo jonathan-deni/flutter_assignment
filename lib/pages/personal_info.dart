@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_assignment/models/account.dart';
 import 'package:flutter_assignment/widgets/next_button.dart';
 import 'package:flutter_assignment/widgets/progress_widget.dart';
+import 'package:provider/provider.dart';
 
 class PersonalInfo extends StatefulWidget {
   @override
@@ -45,7 +46,7 @@ class _PersonalInfoState extends State<PersonalInfo> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: <Widget>[
-                ProgressWidget(2),
+                Consumer<Account>(builder: (context, account, _) => ProgressWidget(account.progress)),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
@@ -65,118 +66,120 @@ class _PersonalInfoState extends State<PersonalInfo> {
                     SizedBox(
                       height: 25.0,
                     ),
-                    Builder(
-                      builder: (context) => Form(
-                        key: formKey,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.max,
-                          children: <Widget>[
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
+                    Consumer<Account>(
+                      builder: (context, account, _) => Builder(
+                        builder: (context) => Form(
+                          key: formKey,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisSize: MainAxisSize.max,
+                            children: <Widget>[
+                              Container(
+                                decoration: BoxDecoration(
                                   color: Colors.white,
-                                  width: 10,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 10,
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text('Goal for Activation'),
+                                    DropdownButtonFormField(
+                                      value: currentGoals,
+                                      decoration: InputDecoration(
+                                          enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(color: Colors.white)
+                                          )
+                                      ),
+                                      items: goalsList.map((goals) {
+                                        return DropdownMenuItem(
+                                          value: goals,
+                                          child: Text('$goals'),
+                                        );
+                                      }).toList(),
+                                      hint: Text('-Choose Option-'),
+                                      disabledHint: Text('-Choose Option-'),
+                                      onChanged: (val) => setState(()=> currentGoals = val),
+                                      onSaved: (val) => account.goals = val,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text('Goal for Activation'),
-                                  DropdownButtonFormField(
-                                    value: currentGoals,
-                                    decoration: InputDecoration(
-                                        enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors.white)
-                                        )
-                                    ),
-                                    items: goalsList.map((goals) {
-                                      return DropdownMenuItem(
-                                        value: goals,
-                                        child: Text('$goals'),
-                                      );
-                                    }).toList(),
-                                    hint: Text('-Choose Option-'),
-                                    disabledHint: Text('-Choose Option-'),
-                                    onChanged: (val) => setState(()=> currentGoals = val),
-                                    onSaved: (val) => setState(() => account.goals = val),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 20.0,),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
+                              SizedBox(height: 20.0,),
+                              Container(
+                                decoration: BoxDecoration(
                                   color: Colors.white,
-                                  width: 10,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 10,
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text('Monthly Income'),
+                                    DropdownButtonFormField(
+                                      value: currentIncome,
+                                      decoration: InputDecoration(
+                                          enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(color: Colors.white)
+                                          )
+                                      ),
+                                      items: incomeList.map((goals) {
+                                        return DropdownMenuItem(
+                                          value: goals,
+                                          child: Text('$goals'),
+                                        );
+                                      }).toList(),
+                                      hint: Text('-Choose Option-'),
+                                      disabledHint: Text('-Choose Option-'),
+                                      onChanged: (val) => setState(()=>currentIncome = val),
+                                      onSaved: (val) => account.income = val,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text('Monthly Income'),
-                                  DropdownButtonFormField(
-                                    value: currentIncome,
-                                    decoration: InputDecoration(
-                                        enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors.white)
-                                        )
-                                    ),
-                                    items: incomeList.map((goals) {
-                                      return DropdownMenuItem(
-                                        value: goals,
-                                        child: Text('$goals'),
-                                      );
-                                    }).toList(),
-                                    hint: Text('-Choose Option-'),
-                                    disabledHint: Text('-Choose Option-'),
-                                    onChanged: (val) => setState(()=>currentIncome = val),
-                                    onSaved: (val) => setState(() => account.income = val),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: 20.0,),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(
+                              SizedBox(height: 20.0,),
+                              Container(
+                                decoration: BoxDecoration(
                                   color: Colors.white,
-                                  width: 10,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 10,
+                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text('Monthly Expense'),
+                                    DropdownButtonFormField(
+                                      value: currentExpense,
+                                      decoration: InputDecoration(
+                                          enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(color: Colors.white)
+                                          )
+                                      ),
+                                      items: expenseList.map((goals) {
+                                        return DropdownMenuItem(
+                                          value: goals,
+                                          child: Text('$goals'),
+                                        );
+                                      }).toList(),
+                                      hint: Text('-Choose Option-'),
+                                      disabledHint: Text('-Choose Option-'),
+                                      onChanged: (val) => setState(()=>currentExpense = val),
+                                      onSaved: (val) => account.expense = val,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  Text('Monthly Expense'),
-                                  DropdownButtonFormField(
-                                    value: currentExpense,
-                                    decoration: InputDecoration(
-                                        enabledBorder: UnderlineInputBorder(
-                                            borderSide: BorderSide(color: Colors.white)
-                                        )
-                                    ),
-                                    items: expenseList.map((goals) {
-                                      return DropdownMenuItem(
-                                        value: goals,
-                                        child: Text('$goals'),
-                                      );
-                                    }).toList(),
-                                    hint: Text('-Choose Option-'),
-                                    disabledHint: Text('-Choose Option-'),
-                                    onChanged: (val) => setState(()=>currentExpense = val),
-                                    onSaved: (val) => setState(() => account.expense = val),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -184,41 +187,44 @@ class _PersonalInfoState extends State<PersonalInfo> {
                 ),
                 Column(
                   children: <Widget>[
-                    NextButton(onPressNextButton: () {
-                      final form = formKey.currentState;
-                      bool validPersonalInfo = (currentGoals != null)  &&
-                          (currentIncome != null) &&
-                          (currentExpense != null);
-                      if (validPersonalInfo) {
-                        form.save();
-                        Navigator.pushNamed(context, '/vcall');
-                      } else {
-                        print('personal info error');
-                        showDialog<void>(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Personal Information Incomplete'),
-                              content: SingleChildScrollView(
-                                child: ListBody(
-                                  children: <Widget>[
-                                    Text('Please chose all personal information data needed'),
-                                  ],
+                    Consumer<Account>(
+                      builder: (context, account, _) => NextButton(onPressNextButton: () {
+                        final form = formKey.currentState;
+                        bool validPersonalInfo = (currentGoals != null)  &&
+                            (currentIncome != null) &&
+                            (currentExpense != null);
+                        if (validPersonalInfo) {
+                          form.save();
+                          if(account.progress <= 2) account.progress += 1;
+                          Navigator.pushNamed(context, '/vcall');
+                        } else {
+                          print('personal info error');
+                          showDialog<void>(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('Personal Information Incomplete'),
+                                content: SingleChildScrollView(
+                                  child: ListBody(
+                                    children: <Widget>[
+                                      Text('Please chose all personal information data needed'),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              actions: <Widget>[
-                                TextButton(
-                                  child: Text('OK'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
-                        );
-                      }
-                    }),
+                                actions: <Widget>[
+                                  TextButton(
+                                    child: Text('OK'),
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        }
+                      }),
+                    ),
                   ],
                 )
               ],
